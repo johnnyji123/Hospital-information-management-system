@@ -2,6 +2,7 @@ import pandas as pd
 import polars as pl
 import mysql.connector
 from flask import Flask, render_template
+from flask import request
 
 
 db = mysql.connector.connect(
@@ -62,19 +63,30 @@ def patient_information_table():
 
 
 
-@app.route("/add_patient", methods = ["POST"])
+@app.route("/add_patient", methods = ["GET", "POST"])
 def add_patient():
-        cursor.execute("INSERT INTO Patient_info (Patient_ID, Name, Age, Sex, Medical_record_number, diagnosis)"
-                   "VALUES (%s, %s, %s, %s, %s , %s)" 
+    
+    patient_id = request.form.get("Patient_ID")
+    name = request.form.get("Name")
+    age = request.form.get("Age")
+    sex = request.form.get("Sex")
+    mrn = request.form.get("Medical_record_number")
+    diagnosis = request.form.get("diagnosis")
+    
+    cursor.execute("INSERT INTO Patient_info (Patient_ID, Name, Age, Sex, Medical_record_number, diagnosis)"
+                   "VALUES (%s, %s, %s, %s, %s, %s)",
+                   (patient_id, name, age, sex, mrn, diagnosis)
                    
                    )
-        db.commit()
         
-        return render_template("add_patient.html")
+    db.commit()
     
-    
+    return render_template("add_patient.html")
+
+
         
         
-#if __name__ == "__main__":
-   # app.run(debug = True, use_reloader = False)
+if __name__ == "__main__":
+    app.run(debug = True, use_reloader = False)
+
 

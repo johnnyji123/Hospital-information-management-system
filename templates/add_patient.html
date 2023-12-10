@@ -9,6 +9,15 @@
   </head>
   <body>
     <h2> Add Patient</h2>
+    <form action = "{{ url_for ('add_patient') }}" method = "POST"> 
+        <input type = "text" placeholder = "Patient id" name = "Patient_ID"> </input>
+        <input type = "text" placeholder = "Name" name = "Name"> </input>
+        <input type = "number" placeholder = "Age" name = "Age"> </input>
+        <input type = "text" placeholder = "Sex" name = "Sex"> </input>
+        <input type = "text" placeholder = "Medical record number" name = "Medical_record_number"> </input>
+        <input type = "text" placeholder = "Diagnosis" name = "diagnosis"></input>
+        <input type = "submit" value = "submit"></button>
+    </form>
     <div>
      
       </ul>
