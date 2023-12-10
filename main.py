@@ -59,8 +59,22 @@ def patient_information_table():
     
             
     return render_template("index.html", data = remove_duplicate_list)
+
+
+
+@app.route("/add_patient", methods = ["POST"])
+def add_patient():
+        cursor.execute("INSERT INTO Patient_info (Patient_ID, Name, Age, Sex, Medical_record_number, diagnosis)"
+                   "VALUES (%s, %s, %s, %s, %s , %s)" 
+                   
+                   )
+        db.commit()
+        
+        return render_template("add_patient.html")
+    
+    
         
         
-if __name__ == "__main__":
-    app.run()
+#if __name__ == "__main__":
+   # app.run(debug = True, use_reloader = False)
 
