@@ -84,13 +84,12 @@ def add_patient():
     return render_template("add_patient.html")
 
 
-@app.route("/edit_patient_details", methods = ["GET", "POST"])
+@app.route("/edit_patient_details/<patient_id>", methods=["GET", "POST"])
 def get_patient_details(patient_id):
-   cursor.execute("SELECT * FROM Patient_info WHERE Patient_ID = %s", (patient_id))
-   patient_details = cursor.fetchone()
-   
-   
-   return render_template("edit_details.html", patient_details)
+    print(f"Type of patient_id: {type(patient_id)}")
+    cursor.execute("SELECT * FROM Patient_info WHERE Patient_ID = %s", (patient_id, ))
+    patient_details = cursor.fetchone()
+    return render_template("edit_details.html", patient_details = patient_details)
     
 
         
@@ -99,7 +98,7 @@ if __name__ == "__main__":
     app.run(debug = True, use_reloader = False)
 
 
-
+    
     
     
     

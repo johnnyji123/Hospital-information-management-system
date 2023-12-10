@@ -11,7 +11,9 @@
     <h2> Edit Patient Details </h2>
     <div>
       <ul>  
-         
+         {% for data in patient_details%}
+         {{data}}
+         {% endfor %}
       </ul>
     </div>
     <script src="index.js"></script>

@@ -16,7 +16,8 @@
            {% for key, value in row.items() %}
                {{key}} : {{value}}
            {% endfor %}
-           <button>Edit</button>
+           
+            <a href="{{ url_for('get_patient_details', patient_id = row['Patient_ID']) }}">Edit</a>
           </li> 
         {% endfor %}
       </ul>
