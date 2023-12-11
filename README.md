@@ -1,5 +1,5 @@
 # Hospital Information Management System (HIMS)
-### Developed using Python, the system leverages the Flask web framework for seamless HTTP request handling, and MySQL serves as the relational database to elegantly manage the complex network of patient records.
+### Developed using Python, the system leverages the Flask web framework for seamless HTTP request handling, and MySQL serves as the relational database to manage the complex network of patient records.
 ### Features:
 * The HIMS creates a dedicated database from scratch to store patient information securely.
 * Users can add/register new patients, providing essential details such as name, contact information, and medical history.
