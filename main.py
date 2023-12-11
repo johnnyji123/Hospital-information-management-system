@@ -3,6 +3,7 @@ import polars as pl
 import mysql.connector
 from flask import Flask, render_template
 from flask import request
+import json
 
 
 db = mysql.connector.connect(
@@ -86,19 +87,50 @@ def add_patient():
 
 @app.route("/edit_patient_details/<patient_id>", methods=["GET", "POST"])
 def get_patient_details(patient_id):
-    print(f"Type of patient_id: {type(patient_id)}")
-    cursor.execute("SELECT * FROM Patient_info WHERE Patient_ID = %s", (patient_id, ))
-    patient_details = cursor.fetchone()
-    return render_template("edit_details.html", patient_details = patient_details)
-    
+    with db.cursor() as cursor:
+        cursor.execute("SELECT * FROM Patient_info WHERE Patient_ID = %s", (patient_id, ))
+        patient_details = cursor.fetchone()
+        
+        col_names = [name[0] for name in cursor.description]    
+        to_dict = dict(zip(col_names, patient_details))
+        
+        return render_template("edit_details.html",  patient_details = [to_dict])
+        
+   
 
+
+@app.route("/edit_patient_details/<patient_id>", methods = ["GET", "POST"])
+def update_patient_details(patient_id):
+    try:
+        new_patient_id = request.form.get("Patient_ID")
+        name = request.form.get("Name")
+        age = request.form.get("Age")
+        sex = request.form.get("Sex")
+        mrn = request.form.get("Medical_record_number")
+        diagnosis = request.form.get("diagnosis")
+        
+        cursor.execute("UPDATE Patient_info SET Patient_ID = %s , Name = %s, Age = %s, Sex = %s, Medical_record_number = %s, diagnosis = %s WHERE Patient_ID = %s" ,
+                       (new_patient_id, name, age, sex , mrn, diagnosis, patient_id))
         
         
+        db.commit()     
+        
+        
+    except TypeError as e:
+        print("error", e)
+       
+        
+        
+   
+    
+            
+    return render_template("edit_details.html")         
+            
 if __name__ == "__main__":
     app.run(debug = True, use_reloader = False)
-
-
     
+    
+        
     
     
     
