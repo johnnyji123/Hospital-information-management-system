@@ -5,29 +5,27 @@ from flask import Flask, render_template
 from flask import request
 import json
 
-
+# Creating a connection to my database
 db = mysql.connector.connect(
     host = "localhost",
     user = "root",
     password = "projects123123",
-    database = "Patient_management_system"
-    
-    
+    database = "Patient_management_system" 
     )
 
+# Creating a cursor object
 cursor = db.cursor()
 # table = Patient_info
 # table Appointments
 # table Billing
 
-cursor.execute("DELETE FROM Patient_info WHERE Patient_ID IS NULL AND Name IS NULL AND Age IS NULL AND Sex IS NULL AND Medical_record_number IS NULL AND diagnosis IS NULL ")
-db.commit()
 
-
+# Initialising app
 app = Flask(__name__)
 
 # Write a function that returns patient info table
 
+# Function/Endpoint that retrieves patient information 
 @app.route("/")
 def patient_information_table():
     cursor.execute("SELECT * FROM Patient_info")
@@ -37,11 +35,12 @@ def patient_information_table():
     row_list = []
     remove_duplicate_list = []
     
+    # Getting all column names
     for i in cursor.description:
         column_names = i[0]
         col_name_list.append(column_names)
         
-        
+    # Getting all rows
     all_rows = cursor.fetchall()
     
     # Loop over all the rows and create an empty dictionary
@@ -64,67 +63,60 @@ def patient_information_table():
 
 
 
+# Creating a function/endpoint that registers/adds patient to the database
 @app.route("/add_patient", methods = ["GET", "POST"])
 def add_patient():
-    
-    patient_id = request.form.get("Patient_ID")
-    name = request.form.get("Name")
-    age = request.form.get("Age")
-    sex = request.form.get("Sex")
-    mrn = request.form.get("Medical_record_number")
-    diagnosis = request.form.get("diagnosis")
-    
-    cursor.execute("INSERT INTO Patient_info (Patient_ID, Name, Age, Sex, Medical_record_number, diagnosis)"
-                   "VALUES (%s, %s, %s, %s, %s, %s)",
-                   (patient_id, name, age, sex, mrn, diagnosis)
-                   
-                   )
-        
-    db.commit()
-    
-    return render_template("add_patient.html")
-
-
-@app.route("/edit_patient_details/<patient_id>", methods=["GET", "POST"])
-def get_patient_details(patient_id):
     with db.cursor() as cursor:
-        cursor.execute("SELECT * FROM Patient_info WHERE Patient_ID = %s", (patient_id, ))
-        patient_details = cursor.fetchone()
-        
-        col_names = [name[0] for name in cursor.description]    
-        to_dict = dict(zip(col_names, patient_details))
-        
-        return render_template("edit_details.html",  patient_details = [to_dict])
-        
-   
-
-
-@app.route("/edit_patient_details/<patient_id>", methods = ["GET", "POST"])
-def update_patient_details(patient_id):
-    try:
-        new_patient_id = request.form.get("Patient_ID")
+        patient_id = request.form.get("Patient_ID")
         name = request.form.get("Name")
         age = request.form.get("Age")
         sex = request.form.get("Sex")
         mrn = request.form.get("Medical_record_number")
         diagnosis = request.form.get("diagnosis")
         
-        cursor.execute("UPDATE Patient_info SET Patient_ID = %s , Name = %s, Age = %s, Sex = %s, Medical_record_number = %s, diagnosis = %s WHERE Patient_ID = %s" ,
-                       (new_patient_id, name, age, sex , mrn, diagnosis, patient_id))
-        
-        
-        db.commit()     
-        
-        
-    except TypeError as e:
-        print("error", e)
-       
-        
-        
-   
-    
+        cursor.execute("INSERT INTO Patient_info (Patient_ID, Name, Age, Sex, Medical_record_number, diagnosis)"
+                       "VALUES (%s, %s, %s, %s, %s, %s)",
+                       (patient_id, name, age, sex, mrn, diagnosis)
+                       
+                       )
             
-    return render_template("edit_details.html")         
+        db.commit()
+        
+        return render_template("add_patient.html")
+    
+# Creating a function/endpoint that renders patient info based on Patient ID 
+@app.route("/edit_patient_details/<patient_id>", methods=["GET", "POST"])
+def get_patient_details(patient_id):
+    with db.cursor() as cursor:
+        cursor.execute("SELECT * FROM Patient_info WHERE Patient_ID = %s", (patient_id, ))
+        patient_details = cursor.fetchone()
+
+        col_names = [name[0] for name in cursor.description]    
+        to_dict = dict(zip(col_names, patient_details))
+        
+        return render_template("edit_details.html", patient_details=[to_dict])
+   
+
+
+# Creating a function/endpoint that updates patient information based on Patient ID
+@app.route("/edit_patient_details/<patient_id>", methods = ["GET", "POST"])
+def update_patient_details(patient_id):
+    with db.cursor() as cursor:
+            new_patient_id = request.form.get("Patient_ID")
+            name = request.form.get("Name")
+            age = request.form.get("Age")
+            sex = request.form.get("Sex")
+            mrn = request.form.get("Medical_record_number")
+            diagnosis = request.form.get("diagnosis")
+            
+            cursor.execute("UPDATE Patient_info SET Patient_ID = %s , Name = %s, Age = %s, Sex = %s, Medical_record_number = %s, diagnosis = %s WHERE Patient_ID = %s" ,
+                           (new_patient_id, name, age, sex , mrn, diagnosis, patient_id))
+            
+            
+            db.commit()              
+            
+    return render_template("edit_details.html")
+            
             
 if __name__ == "__main__":
     app.run(debug = True, use_reloader = False)

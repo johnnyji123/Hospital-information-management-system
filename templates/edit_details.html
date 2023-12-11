@@ -16,7 +16,7 @@
                  {{key}} : {{value}}  
                  
              {% endfor %}     
-              <form action = "{{url_for('update_patient_details', patient_id = data['Patient_ID'])}}" method = "POST">
+              <form action = "{{url_for('get_patient_details', patient_id = data['Patient_ID'])}}" method = "POST">
                   <input type = "text" placeholder = "Patient_id" name = "Patient_ID"> </input>
                   <input type = "text" placeholder = "Name" name = "Name"> </input>
                   <input type = "number" placeholder = "Age" name = "Age"> </input>
